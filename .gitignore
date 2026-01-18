@@ -1,0 +1,23 @@
+# 依赖库
+node_modules/
+
+# VitePress 编译产物 (SSR 生成的静态页面)
+# 构建后的文件不应进入版本控制，而是通过 CI/CD 自动生成
+.vitepress/dist/
+.vitepress/cache/
+
+# 开发工具和临时文件
+.DS_Store
+*.local
+thumbs.db
+
+# 日志文件
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# 如果你使用的是脚本生成 .md 文件，且不希望这些生成的文件被追踪
+# docs/cards/*.md (根据你的具体方案决定是否取消注释)
+
+pnpm-lock.yaml
