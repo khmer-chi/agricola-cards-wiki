@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import cardMap from "../../../docs/cardMap.json";
 function transformString(input: string) {
   // 1. 取得第一個字元 'A' 的 ASCII 碼 (65)
@@ -18,42 +18,65 @@ const cardMapSorted = (cardMap as any[]).toSorted(([, a], [, b]) => {
 const { data } = defineProps<{ data: any }>();
 const { lang, langObject } = data;
 const search = ref("");
-const searchChange = () => {
-  console.log(search.value);
+
+const cardMapSortedFilterBySearch = computed(() => {
+  if (!search.value) return cardMapSorted;
+  return cardMapSorted.filter(([, item]) => {
+    const searchLower = search.value.toLowerCase();
+    const name = langObject[item.name] ?? item.name;
+    if (name.toLowerCase().includes(searchLower)) return true;
+    for (const descItem of item.desc) {
+      const descText = langObject[descItem] ?? descItem;
+      if (descText.toLowerCase().includes(searchLower)) return true;
+    }
+    return false;
+  });
+});
+const searchChange = (e: Event) => {
+  const el = e.target as HTMLInputElement;
+  search.value = el.value;
+  el.blur();
 };
 </script>
 <template>
-  <div class="flex items-center mb-5">
-    <input
-      type="text"
-      placeholder="搜尋內容..."
-      class="input"
-      v-model="search"
-      @change="searchChange"
-      @keyup.enter="($event.target as HTMLInputElement).blur()"
-    />
-  </div>
   <div class="flex flex-col">
-    <div class="flex py-2 relative" v-for="[, item] in cardMapSorted" :key="item.id">
-      <div class="w-1/4">
-        <img
-          class="max-w-unset h-[200px]"
-          :src="`/${lang}/${item.id}.webp`"
-          ：data-src="`/${lang}/${item.id}.webp`"
-          :alt="`${item.name}`"
-          loading="lazy"
-        />
-        <div class="text-center pt-2">
-          {{ item.numbering }}-{{ langObject[item.name] ?? item.name }}
+    <div class="flex items-center mb-5">
+      <input
+        type="text"
+        name="search"
+        placeholder="搜尋內容..."
+        class="input"
+        @keyup.enter="searchChange"
+        @blur="searchChange"
+      />
+      <div class="whitespace-nowrap ml-5">
+        {{ cardMapSortedFilterBySearch.length }} 筆結果
+      </div>
+    </div>
+    <div class="flex flex-col overflow-y-auto min-h-0 flex-1">
+      <div
+        class="flex py-2 border-gray-200 dark:border-zinc-700 border-b pb-3"
+        v-for="[, item] in cardMapSortedFilterBySearch"
+        :key="item.id"
+      >
+        <div class="w-1/4">
+          <a :href="`/${lang}/cards/${item.id}`">
+            <img
+              class="max-w-unset h-[200px]"
+              :src="`/${lang}/${item.id}.webp`"
+              :data-src="`/${lang}/${item.id}.webp`"
+              :alt="`${item.name}`"
+              loading="lazy"
+            />
+          </a>
+          <div class="text-center pt-2">
+            {{ item.numbering }}-{{ langObject[item.name] ?? item.name }}
+          </div>
+        </div>
+        <div class="w-full px-2 py-2 w-3/4">
+          {{ item.desc.map((v:string) => langObject[v] ?? v).join("") }}
         </div>
       </div>
-      <div class="w-full px-2 py-2 w-3/4">
-        {{ item.desc.map((v:string) => langObject[v] ?? v).join("") }}
-      </div>
-      <a
-        :href="`/${lang}/cards/${item.id}`"
-        class="absolute top-0 left-0 w-full h-full"
-      />
     </div>
   </div>
 </template>

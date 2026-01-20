@@ -12,6 +12,7 @@
     "vitepress": "^1.6.4"
   },
   "dependencies": {
-    "@types/node": "^25.0.9"
+    "@types/node": "^25.0.9",
+    "chinese-conv": "^4.0.0"
   }
 }
