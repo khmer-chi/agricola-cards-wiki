@@ -2,11 +2,13 @@
 import type { Theme } from 'vitepress';
 import DefaultTheme from 'vitepress/theme';
 import "virtual:uno.css"
-// import CardDetail from './components/CardDetail.vue';
+import CardPage from './components/CardPage.vue';
+import Index from './components/Index.vue';
 export default {
     extends: DefaultTheme,
     //   Layout,
-    // enhanceApp({ app }) {
-    //     app.component('CardDetail', CardDetail);
-    // },
+    enhanceApp({ app }) {
+        app.component('CardPage', CardPage);
+        app.component('Index', Index);
+    },
 } satisfies Theme;

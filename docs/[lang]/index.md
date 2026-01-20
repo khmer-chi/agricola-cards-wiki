@@ -1,7 +1,10 @@
+---
+---
+
 <script setup lang="ts">
 import { useData } from "vitepress";
 const { params:data } = useData();
 </script>
 
-<CardPage :data />
+<Index :data />
 

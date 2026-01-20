@@ -18,7 +18,7 @@ export default {
                     params: {
                         ...card,
                         name: object[card.name] ?? card.name,
-                        desc: card.desc.map(v => {
+                        desc: card.desc.map((v: string) => {
                             return object[v] ?? v
                         }),
                         lang: name
