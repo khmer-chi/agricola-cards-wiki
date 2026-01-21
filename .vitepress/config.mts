@@ -1,20 +1,25 @@
 import { defineConfig } from 'vitepress'
 import UnoCss from 'unocss/vite'
+import { visualizer } from 'rollup-plugin-visualizer'
 export default defineConfig({
   lang: 'zh-TW',
 
   title: "農家樂 桌遊 維基百科",
   description: "各式各樣的農家樂卡牌介紹與說明",
+  appearance: 'force-dark',
   themeConfig: {
-    // 當前語言是中文時，下拉選單顯示的提示文字
-    // selectLanguageText: '切換語言',
-    // 多語系切換器中，標示「這是我現在的語言」的標籤
-    // selectLanguageAriaLabel: '選擇語言',
   },
   vite: {
     plugins: [
       UnoCss(),
+      // visualizer({
+      //   open: true,          // 打包完成后自动在浏览器打开分析报告
+      //   filename: 'stats.html', // 生成的报告文件名
+      //   gzipSize: true,      // 显示 gzip 后的体积
+      //   brotliSize: true,    // 显示 brotli 后的体积
+      // })
     ],
+
   },
   srcDir: './docs',
   rewrites: {
