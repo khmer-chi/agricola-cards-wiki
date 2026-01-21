@@ -23,6 +23,7 @@ const cardMapSortedFilterBySearch = computed(() => {
   return cardMapSorted.filter(([, item]) => {
     const searchLower = searchQuery.value.toLowerCase();
     const langArray = ["zh", "cn", "en"];
+    if (item.numbering.toLowerCase().includes(searchLower)) return true;
     for (let i = 0; i < langArray.length; i++) {
       const langName = langArray[i];
       const name = getLangObject(langName, "object", item.name);
@@ -128,7 +129,7 @@ const clearSearch = () => {
             class="flex justify-center"
           > -->
           <img
-            class="max-w-300px w-full"
+            class="max-w-300px w-full min-h-200px"
             :src="`/${lang}/${item.id}.webp`"
             :data-src="`/${lang}/${item.id}.webp`"
             :alt="`${item.name}`"
