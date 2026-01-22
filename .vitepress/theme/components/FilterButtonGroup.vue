@@ -17,13 +17,13 @@ const setCurrent = (payload: string) => {
 </script>
 <template>
   <div class="flex items-center mb-5">
-    {{ name }}:
+    <div class="mr-2">{{ name }}</div>
     <button
       v-for="item in array"
       :key="item"
       @click="setCurrent(item)"
       :class="[
-        'px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200 border',
+        'mr-2 px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200 border',
         data === item
           ? 'bg-orange-500 border-orange-500 text-white shadow-md shadow-orange-500/20'
           : 'bg-white dark:bg-zinc-800 border-gray-200 dark:border-zinc-700 text-gray-600 dark:text-zinc-400 hover:border-orange-500 hover:text-orange-500',
