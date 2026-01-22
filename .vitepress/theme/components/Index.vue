@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { computed, ref, onMounted } from "vue";
-import cardMap from "../../../docs/cardMap.json";
-import { transformString } from "../../lib/transformString.ts";
-const cardMapSorted = (cardMap as any[]).toSorted(([, a], [, b]) => {
-  return transformString(a.numbering) - transformString(b.numbering);
-});
+import { computed, ref, onMounted, watchEffect, effect, watch } from "vue";
+import FilterButtonGroup from "./FilterButtonGroup.vue";
+import { updateUrl } from "../../lib/updateUrl.ts";
+import { parseHash2Object } from "../../lib/parseHash2Object.ts";
+import { filterCard } from "../../lib/filterCard.ts";
+import { getLangObject } from "../../lib/getLangObject.ts";
+
 const { data } = defineProps<{ data: any }>();
 const lang = computed(() => {
   return data.lang;
@@ -12,69 +13,50 @@ const lang = computed(() => {
 const langObject = computed(() => {
   return data.langObject;
 });
-const getLangObject = (langName: string, field: string, key: string) => {
-  return langObject.value[langName][field]?.[key] ?? key;
-};
 
 const searchQuery = ref("");
+const currentDeck = ref("");
+const currentPlayer = ref("");
 
 const cardMapSortedFilterBySearch = computed(() => {
-  if (!searchQuery.value) return cardMapSorted;
-  return cardMapSorted.filter(([, item]) => {
-    const searchLower = searchQuery.value.toLowerCase();
-    const langArray = ["zh", "cn", "en"];
-    if (item.numbering.toLowerCase().includes(searchLower)) return true;
-    for (let i = 0; i < langArray.length; i++) {
-      const langName = langArray[i];
-      const name = getLangObject(langName, "object", item.name);
-      if (name.toLowerCase().includes(searchLower)) return true;
-      const nameExtend = getLangObject(langName, "extend", item.name);
-      if (nameExtend.toLowerCase().includes(searchLower)) return true;
-      for (const descItem of item.desc) {
-        const descText = getLangObject(langName, "object", descItem);
-        if (descText.toLowerCase().includes(searchLower)) return true;
-        const descTextExtend = getLangObject(langName, "extend", descItem);
-        if (descTextExtend.toLowerCase().includes(searchLower)) return true;
-      }
-    }
-    return false;
-  });
+  return filterCard(
+    langObject.value,
+    searchQuery.value,
+    currentDeck.value,
+    currentPlayer.value
+  );
 });
 
 const scrollRef = ref<HTMLDivElement | void>();
-// 更新網址參數
-const updateUrl = (val: string) => {
-  if (val) {
-    // 格式如：#q=search_text
-    window.location.hash = `q=${encodeURIComponent(val)}`;
-  } else {
-    // 清空 Hash，但保留 # 以免頁面跳轉
-    window.history.replaceState(null, "", " ");
-  }
-};
 const searchChange = (e: Event) => {
   const el = e.target as HTMLInputElement;
   searchQuery.value = el.value;
   el.blur();
   scrollRef.value?.scrollTo({ top: 0, behavior: "smooth" });
-  updateUrl(searchQuery.value);
+  updateUrl({ q: searchQuery.value });
 };
 const searchEl = ref<HTMLInputElement | null>(null);
+const initSearchUrl = () => {
+  const oriObj = parseHash2Object();
+  searchQuery.value = oriObj.q || "";
+  currentDeck.value = oriObj.deck || "";
+  currentPlayer.value = oriObj.player || "";
+  if (searchEl.value) {
+    searchEl.value.value = searchQuery.value;
+  }
+};
 onMounted(() => {
-  // 初始化：解析 #q=xxx
-  const hash = window.location.hash.slice(1); // 去掉 #
-  const params = new URLSearchParams(hash);
-  searchQuery.value = params.get("q") || "";
-  searchEl.value!.value = searchQuery.value;
+  initSearchUrl();
+
   // 監聽手動修改網址 Hash 的行為 (例如點擊上一頁)
   window.addEventListener("hashchange", () => {
-    const newParams = new URLSearchParams(window.location.hash.slice(1));
-    searchQuery.value = newParams.get("q") || "";
+    initSearchUrl();
   });
 });
 const clearSearch = () => {
   searchQuery.value = "";
   if (searchEl.value) searchEl.value.value = "";
+  updateUrl({ q: "" });
 };
 </script>
 <template>
@@ -84,7 +66,7 @@ const clearSearch = () => {
         <input
           type="text"
           name="search"
-          placeholder="搜尋內容..."
+          placeholder="請輸入卡號/卡名/描述進行搜尋"
           class="input"
           ref="searchEl"
           @keyup.enter="searchChange"
@@ -114,9 +96,22 @@ const clearSearch = () => {
         </button>
       </div>
       <div class="whitespace-nowrap ml-5">
-        {{ cardMapSortedFilterBySearch.length }} 筆結果
+        {{ cardMapSortedFilterBySearch.length }} results
       </div>
     </div>
+    <FilterButtonGroup
+      v-model="currentDeck"
+      name="deck"
+      :array="['A', 'B', 'C', 'D', 'E']"
+      v-model:scrollRef="scrollRef"
+    />
+    <FilterButtonGroup
+      v-model="currentPlayer"
+      name="player"
+      :array="['1+', '3+', '4+']"
+      v-model:scrollRef="scrollRef"
+    />
+
     <div
       class="flex flex-col overflow-y-auto min-h-0 flex-1 overflw-x-hidden w-full mb-5"
       ref="scrollRef"
@@ -131,7 +126,6 @@ const clearSearch = () => {
           <img
             class="max-w-300px w-full min-h-200px"
             :src="`/${lang}/${item.id}.webp`"
-            :data-src="`/${lang}/${item.id}.webp`"
             :alt="`${item.name}`"
             loading="lazy"
           />
@@ -139,16 +133,16 @@ const clearSearch = () => {
           <div class="text-center pt-2">
             {{ item.numbering }}-{{ langObject[lang].object[item.name] ?? item.name }}
             <template v-if="lang == 'zh'">
-              <div>({{ getLangObject("cn", "object", item.name) }})</div>
-              <div>({{ getLangObject("en", "object", item.name) }})</div>
+              <div>({{ getLangObject(langObject, "cn", "object", item.name) }})</div>
+              <div>({{ getLangObject(langObject, "en", "object", item.name) }})</div>
             </template>
             <template v-if="lang == 'cn'">
-              <div>({{ getLangObject("zh", "object", item.name) }})</div>
-              <div>({{ getLangObject("en", "object", item.name) }})</div>
+              <div>({{ getLangObject(langObject, "zh", "object", item.name) }})</div>
+              <div>({{ getLangObject(langObject, "en", "object", item.name) }})</div>
             </template>
             <template v-if="lang == 'en'">
-              <div>({{ getLangObject("cn", "object", item.name) }})</div>
-              <div>({{ getLangObject("zh", "object", item.name) }})</div>
+              <div>({{ getLangObject(langObject, "cn", "object", item.name) }})</div>
+              <div>({{ getLangObject(langObject, "zh", "object", item.name) }})</div>
             </template>
           </div>
         </div>

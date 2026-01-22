@@ -4,7 +4,8 @@
   "scripts": {
     "dev": "vitepress dev",
     "build": "vitepress build",
-    "preview": "vitepress preview"
+    "preview": "vitepress preview",
+    "cf-deploy": "wrangler pages deploy .vitepress/dist"
   },
   "devDependencies": {
     "@types/opencc-js": "^1.0.3",
