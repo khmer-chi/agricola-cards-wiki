@@ -7,17 +7,6 @@ const data = defineModel<string>({
 });
 const scrollRef = defineModel<HTMLElement | void>("scrollRef");
 const searchEl = ref<HTMLInputElement | null>(null);
-// const searchChange = (e: Event) => {
-//   data.value =
-//   el.blur();
-//   scrollRef.value?.scrollTo({ top: 0, behavior: "smooth" });
-//   updateUrl({ q: data.value });
-// };
-// const clearSearch = () => {
-//   data.value = "";
-//   //   if (searchEl.value) searchEl.value.value = "";
-//   // updateUrl({ q: "" });
-// };
 watch(data, () => {
   scrollRef.value?.scrollTo({ top: 0, behavior: "smooth" });
   searchEl.value?.blur();
