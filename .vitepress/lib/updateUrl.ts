@@ -1,7 +1,6 @@
 import { parseHash2Object } from "./parseHash2Object.ts";
 
 export const updateUrl = (payload: Record<string, string>) => {
-    console.log({ payload })
     const oriObj = parseHash2Object();
     const newObj = { ...oriObj, ...payload };
     for (const key in payload) {
@@ -9,5 +8,11 @@ export const updateUrl = (payload: Record<string, string>) => {
             delete newObj[key];
         }
     }
-    window.location.hash = new URLSearchParams(newObj).toString();
+
+    if (Object.keys(newObj).length) {
+        window.location.hash = new URLSearchParams(newObj).toString();
+    } else {
+        const cleanUrl = window.location.origin + window.location.pathname + window.location.search;
+        history.replaceState(null, document.title, cleanUrl);
+    }
 };

@@ -1,27 +1,27 @@
 <script setup lang="ts">
 import { updateUrl } from "../../lib/updateUrl.ts";
-import { ref, watch } from "vue";
+import { watch, ref } from "vue";
 const { resultCount } = defineProps<{ resultCount: number }>();
 const data = defineModel<string>({
   required: true,
 });
 const scrollRef = defineModel<HTMLElement | void>("scrollRef");
 const searchEl = ref<HTMLInputElement | null>(null);
-const searchChange = (e: Event) => {
-  const el = e.target as HTMLInputElement;
-  data.value = el.value;
-  el.blur();
-  scrollRef.value?.scrollTo({ top: 0, behavior: "smooth" });
-  updateUrl({ q: data.value });
-};
-const clearSearch = () => {
-  data.value = "";
-  //   if (searchEl.value) searchEl.value.value = "";
-  updateUrl({ q: "" });
-};
+// const searchChange = (e: Event) => {
+//   data.value =
+//   el.blur();
+//   scrollRef.value?.scrollTo({ top: 0, behavior: "smooth" });
+//   updateUrl({ q: data.value });
+// };
+// const clearSearch = () => {
+//   data.value = "";
+//   //   if (searchEl.value) searchEl.value.value = "";
+//   // updateUrl({ q: "" });
+// };
 watch(data, () => {
-  if (!searchEl.value) return;
-  searchEl.value.value = data.value;
+  scrollRef.value?.scrollTo({ top: 0, behavior: "smooth" });
+  searchEl.value?.blur();
+  updateUrl({ q: data.value });
 });
 </script>
 <template>
@@ -33,12 +33,11 @@ watch(data, () => {
         placeholder="請輸入卡號/卡名/描述進行搜尋"
         class="input"
         ref="searchEl"
-        @keyup.enter="searchChange"
-        @blur="searchChange"
+        v-model.lazy="data"
       />
       <button
         v-if="data"
-        @click="clearSearch"
+        @click="data = ''"
         class="absolute top-2 right-2 p-1 border-none bg-transparent cursor-pointer color-[var(--vp-c-text-2)] hover:color-[var(--vp-c-text-1)] flex items-center justify-center transition-colors"
         aria-label="Clear search"
       >
