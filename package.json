@@ -5,7 +5,8 @@
     "dev": "vitepress dev",
     "build": "vitepress build",
     "preview": "vitepress preview",
-    "cf-deploy": "wrangler pages deploy .vitepress/dist"
+    "deploy": "wrangler pages deploy .vitepress/dist",
+    "lazy": "pnpm build &&pnpm run deploy"
   },
   "devDependencies": {
     "@types/opencc-js": "^1.0.3",
