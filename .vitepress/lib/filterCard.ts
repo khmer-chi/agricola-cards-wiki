@@ -18,6 +18,7 @@ export const filterCard = (langObject: Record<string, any>, searchQuery: string,
         }
         const searchLower = searchQuery.toLowerCase();
         const langArray = ["zh", "cn", "en"];
+        if (item.id.toLowerCase().includes(searchLower)) return true;
         if (item.numbering.toLowerCase().includes(searchLower)) return true;
         for (let i = 0; i < langArray.length; i++) {
             const langName = langArray[i];
