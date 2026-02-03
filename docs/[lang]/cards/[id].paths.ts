@@ -4,7 +4,7 @@ import { dirname, join } from "node:path";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const readAgricolaCrawlerFile = (fileName: string) => {
-    return JSON.parse(readFileSync(join(__dirname, '..', '..', '..', '..', 'agricola-crawler', fileName), 'utf-8'))
+    return JSON.parse(readFileSync(join(__dirname, '..', '..', '..', '..', 'agricola-crawler', 'data', fileName), 'utf-8'))
 }
 export default {
     paths() {

@@ -16,7 +16,7 @@ watch(data, () => {
 <template>
   <div class="flex items-center mb-5">
     <a
-      href="/downloads/cards.xlsx"
+      href="/data/cards.xlsx"
       download="card-rank.xlsx"
       class="inline-flex items-center gap-2 p-2 bg-[#1D6F42] hover:bg-[#155231] active:scale-95 text-white rounded-lg transition-all duration-200 no-underline shadow-md hover:shadow-lg group mr-2"
       ><div class="i-lucide-file-spreadsheet text-xl group-hover:bounce w-5 h-5"></div

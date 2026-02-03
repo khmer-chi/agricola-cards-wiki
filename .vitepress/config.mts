@@ -27,13 +27,13 @@ export default defineConfig({
         targets: [
           {
             // 來源：相對於專案根目錄
-            src: join('..', '..', 'agricola-crawler', 'cardRank.xlsx'),
+            src: join('..', '..', 'agricola-crawler', 'data', '*'),
             // 目的地：相對於 build 後的輸出目錄 (通常是 .vitepress/dist)
-            dest: 'downloads'
+            dest: 'data'
           },
           {
             // 來源：相對於專案根目錄
-            src: join('..', '..', 'puppeteer-merge-agricola-card-image', 'result-compression/*'),
+            src: join('..', '..', 'puppeteer-merge-agricola-card-image', 'result-compression', '*'),
             // 目的地：相對於 build 後的輸出目錄 (通常是 .vitepress/dist)
             dest: 'images'
           }
