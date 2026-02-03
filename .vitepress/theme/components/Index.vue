@@ -7,19 +7,31 @@ import { getLangObject } from "../../lib/getLangObject.ts";
 import FilterInput from "./FilterInput.vue";
 
 const { data } = defineProps<{ data: any }>();
-const lang = computed(() => {
-  return data.lang;
+const lang = computed(() => data.lang);
+const langObject = computed(() => data.langObject);
+const cardData = computed(() => data.cardData);
+const cardRank = computed(() => {
+  return new Map(
+    (data.cardRank as [cardName: string, score: number][]).map(([cardName], index) => {
+      const per = (index / data.cardRank.length) * 100;
+      const rank = (() => {
+        if (per >= 0 && per < 16) return 1;
+        if (per >= 16 && per < 50) return 2;
+        if (per >= 50 && per < 84) return 3;
+        if (per >= 84) return 4;
+      })();
+      return [cardName, rank];
+    })
+  );
 });
-const langObject = computed(() => {
-  return data.langObject;
-});
-
+// console.log(cardRank.value);
 const searchQuery = ref("");
 const currentDeck = ref("");
 const currentPlayer = ref("");
 
 const cardMapSortedFilterBySearch = computed(() => {
   return filterCard(
+    cardData.value,
     langObject.value,
     searchQuery.value,
     currentDeck.value,
@@ -36,8 +48,6 @@ const initSearchUrl = () => {
 };
 onMounted(() => {
   initSearchUrl();
-
-  // 監聽手動修改網址 Hash 的行為 (例如點擊上一頁)
   window.addEventListener("hashchange", () => {
     initSearchUrl();
   });
@@ -70,18 +80,18 @@ onMounted(() => {
     >
       <div class="item" v-for="[, item] in cardMapSortedFilterBySearch" :key="item.id">
         <div class="w-full sm:w-1/4 flex flex-col justify-center items-center">
-          <!-- <a
+          <a
             :href="`/${lang}/cards/${item.id}`"
             target="_blank"
             class="flex justify-center"
-          > -->
-          <img
-            class="max-w-300px w-full min-h-200px"
-            :src="`/${lang}/${item.id}.webp`"
-            :alt="`${item.name}`"
-            loading="lazy"
-          />
-          <!-- </a> -->
+          >
+            <img
+              class="max-w-300px w-full min-h-200px"
+              :src="`/${lang}/${item.id}.webp`"
+              :alt="`${item.name}`"
+              loading="lazy"
+            />
+          </a>
           <div class="text-center pt-2">
             {{ item.numbering }}-{{ langObject[lang].object[item.name] ?? item.name }}
             <template v-if="lang == 'zh'">
@@ -99,6 +109,9 @@ onMounted(() => {
           </div>
         </div>
         <div class="w-full sm:w-3/4 px-2 py-2">
+          <div v-if="cardRank.get(item.numbering)">
+            cardRank: {{ cardRank.get(item.numbering) }}
+          </div>
           {{ item.desc.map((v:string) => langObject[lang].object?.[v] ?? v).join("") }}
         </div>
       </div>
