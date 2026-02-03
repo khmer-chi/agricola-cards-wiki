@@ -9,6 +9,7 @@
     "lazy": "pnpm build &&pnpm run deploy"
   },
   "devDependencies": {
+    "@iconify-json/lucide": "^1.2.87",
     "@types/opencc-js": "^1.0.3",
     "@unocss/transformer-directives": "^66.6.0",
     "@vitejs/plugin-vue": "^6.0.3",

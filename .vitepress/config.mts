@@ -29,7 +29,7 @@ export default defineConfig({
             // 來源：相對於專案根目錄
             src: join('..', '..', 'agricola-crawler', 'cardRank.xlsx'),
             // 目的地：相對於 build 後的輸出目錄 (通常是 .vitepress/dist)
-            dest: 'download'
+            dest: 'downloads'
           },
           {
             // 來源：相對於專案根目錄
