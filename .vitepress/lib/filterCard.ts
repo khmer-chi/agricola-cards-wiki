@@ -1,17 +1,8 @@
-
-// import { fileURLToPath } from "node:url";
-// import { dirname, join } from "node:path";
-// const __filename = fileURLToPath(import.meta.url);
-// const __dirname = dirname(__filename);
 import { getLangObject } from "./getLangObject.ts";
 import { transformString } from "./transformString.ts";
-// import { readFileSync } from "node:fs";
 
 
 export const filterCard = (cardData: [string, any][], langObject: Record<string, any>, searchQuery: string, currentDeck: string, currentPlayer: string) => {
-    // const cardMap = JSON.parse(readFileSync(join(__dirname, '..', 'agricola-crawler/cardMap.json'), 'utf-8'))
-    // const allCardData = JSON.parse(readFileSync(join(__dirname, '..', 'agricola-crawler/allCardData.json'), 'utf-8'));
-    // const cardData = Array.from(new Map<string, any>([...cardMap, ...allCardData]))
     const cardMapSorted = cardData.toSorted(([, a], [, b]) => {
         return transformString(a.numbering) - transformString(b.numbering);
     });

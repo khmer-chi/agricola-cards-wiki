@@ -4,7 +4,7 @@ const { data } = defineProps<{ data: any }>();
 <template>
   <div class="flex flex-wrap">
     <div class="md:w-1/2 w-full flex-none flex justify-center items-start">
-      <img :src="`/${data.lang}/${data.id}.webp`" :alt="`${data.name}`" />
+      <img :src="`/images/${data.lang}/${data.id}.webp`" :alt="`${data.name}`" />
     </div>
     <div class="md:w-1/2 w-full p-2 flex-none">
       <div>lang:{{ data.lang }}</div>

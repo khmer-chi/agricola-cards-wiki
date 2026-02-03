@@ -1,6 +1,11 @@
 import { defineConfig } from 'vitepress'
 import UnoCss from 'unocss/vite'
 import { visualizer } from 'rollup-plugin-visualizer'
+import { viteStaticCopy } from 'vite-plugin-static-copy'
+import { fileURLToPath } from "node:url";
+import { dirname, join } from "node:path";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 export default defineConfig({
   lang: 'zh-TW',
 
@@ -17,9 +22,25 @@ export default defineConfig({
       //   filename: 'stats.html', // 生成的报告文件名
       //   gzipSize: true,      // 显示 gzip 后的体积
       //   brotliSize: true,    // 显示 brotli 后的体积
-      // })
+      // }),
+      viteStaticCopy({
+        targets: [
+          {
+            // 來源：相對於專案根目錄
+            src: join('..', '..', 'agricola-crawler', 'cardRank.xlsx'),
+            // 目的地：相對於 build 後的輸出目錄 (通常是 .vitepress/dist)
+            dest: 'download'
+          },
+          {
+            // 來源：相對於專案根目錄
+            src: join('..', '..', 'puppeteer-merge-agricola-card-image', 'result-compression/*'),
+            // 目的地：相對於 build 後的輸出目錄 (通常是 .vitepress/dist)
+            dest: 'images'
+          }
+        ]
+      })
     ],
-
+    // 
   },
   srcDir: './docs',
   rewrites: {

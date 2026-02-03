@@ -80,18 +80,18 @@ onMounted(() => {
     >
       <div class="item" v-for="[, item] in cardMapSortedFilterBySearch" :key="item.id">
         <div class="w-full sm:w-1/4 flex flex-col justify-center items-center">
-          <a
+          <!-- <a
             :href="`/${lang}/cards/${item.id}`"
             target="_blank"
             class="flex justify-center"
-          >
-            <img
-              class="max-w-300px w-full min-h-200px"
-              :src="`/${lang}/${item.id}.webp`"
-              :alt="`${item.name}`"
-              loading="lazy"
-            />
-          </a>
+          > -->
+          <img
+            class="max-w-300px w-full min-h-200px"
+            :src="`/images/${lang}/${item.id}.webp`"
+            :alt="`${item.name}`"
+            loading="lazy"
+          />
+          <!-- </a> -->
           <div class="text-center pt-2">
             {{ item.numbering }}-{{ langObject[lang].object[item.name] ?? item.name }}
             <template v-if="lang == 'zh'">
