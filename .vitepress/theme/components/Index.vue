@@ -11,18 +11,7 @@ const lang = computed(() => data.lang);
 const langObject = computed(() => data.langObject);
 const cardData = computed(() => data.cardData);
 const cardRank = computed(() => {
-  return new Map(
-    (data.cardRank as [cardName: string, score: number][]).map(([cardName], index) => {
-      const per = (index / data.cardRank.length) * 100;
-      const rank = (() => {
-        if (per >= 0 && per < 16) return 1;
-        if (per >= 16 && per < 50) return 2;
-        if (per >= 50 && per < 84) return 3;
-        if (per >= 84) return 4;
-      })();
-      return [cardName, rank];
-    })
-  );
+  return new Map<string, { score: number; scoreName: number }>(data.cardRank);
 });
 // console.log(cardRank.value);
 const searchQuery = ref("");
@@ -93,7 +82,8 @@ onMounted(() => {
           />
           <!-- </a> -->
           <div class="text-center pt-2">
-            {{ item.numbering }}-{{ langObject[lang].object[item.name] ?? item.name }}
+            {{ item.numbering }}-
+            {{ getLangObject(langObject, lang, "object", item.name) }}-
             <template v-if="lang == 'zh'">
               <div>({{ getLangObject(langObject, "cn", "object", item.name) }})</div>
               <div>({{ getLangObject(langObject, "en", "object", item.name) }})</div>
@@ -109,9 +99,13 @@ onMounted(() => {
           </div>
         </div>
         <div class="w-full sm:w-3/4 px-2 py-2">
-          <div v-if="cardRank.get(item.numbering)">
-            cardRank: {{ cardRank.get(item.numbering) }}
-          </div>
+          <template v-if="item.type != 'major'">
+            <template v-if="cardRank.get(item.numbering)">
+              {{ cardRank.get(item.numbering)?.scoreName }}
+            </template>
+            <template v-else> 禁卡或廢卡 </template>
+          </template>
+
           {{ item.desc.map((v:string) => langObject[lang].object?.[v] ?? v).join("") }}
         </div>
       </div>
