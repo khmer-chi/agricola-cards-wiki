@@ -12,8 +12,8 @@ export default {
         const cardRank = readAgricolaCrawlerFile('cardRank.json');
         const cnObject = readAgricolaCrawlerFile('langCn.json');
         const zhObject = readAgricolaCrawlerFile('langZh.json');
-        const cn2zhObject = chExtend({ from: 'cn', to: 't' }, cnObject);
-        const zh2cnObject = chExtend({ from: 'cn', to: 't' }, zhObject);
+        const cn2zhObject = chExtend({ from: 'cn', to: 't' }, { ...cnObject });
+        const zh2cnObject = chExtend({ from: 'cn', to: 't' }, { ...zhObject });
         const cardMap = readAgricolaCrawlerFile('cardMap.json');
         const allCardData = readAgricolaCrawlerFile('allCardData.json');
         const cardData = Array.from(new Map<string, any>([...cardMap, ...allCardData]))
